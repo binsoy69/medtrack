@@ -1,7 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
+import type { User } from "@supabase/supabase-js";
 
-export async function updateSession(request: NextRequest) {
+export async function updateSession(
+  request: NextRequest,
+): Promise<{ response: NextResponse; user: User | null }> {
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -29,8 +32,12 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  // refreshing the auth token
-  await supabase.auth.getUser();
+  // Refresh the auth token and return the user for routing decisions.
+  // Using getUser() (not getSession()) as it validates against the server,
+  // making it safe for authorization decisions per Supabase SSR best practices.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  return supabaseResponse;
+  return { response: supabaseResponse, user };
 }
