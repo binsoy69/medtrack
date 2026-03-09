@@ -166,6 +166,7 @@ Task 1  (Init project)
 ```
 
 **Parallelization opportunities:**
+
 - Tasks 2 + 4 can start after Task 1 (in parallel)
 - Tasks 5 + 6 can be done in parallel after Task 4
 - Task 12 (pure utility functions) can start as early as after Task 2 (only needs TypeScript types)
@@ -182,6 +183,7 @@ Task 1  (Init project)
 Create the Next.js project using `create-next-app` with App Router, TypeScript, and Tailwind CSS. Install all project dependencies. Set up the project configuration files and constants.
 
 **What to do (step by step):**
+
 1. Run `npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --use-npm --import-alias "@/*"` in the project root
 2. Install runtime deps: `npm install @supabase/supabase-js @supabase/ssr zustand react-hook-form @hookform/resolvers zod jspdf resend date-fns`
 3. Install dev deps: `npm install -D vitest @testing-library/react @testing-library/jest-dom @vitejs/plugin-react jsdom`
@@ -199,6 +201,7 @@ Create the Next.js project using `create-next-app` with App Router, TypeScript, 
 9. Add `"test": "vitest"` to package.json scripts
 
 **Files to create/modify:**
+
 - `package.json` (via create-next-app + npm install)
 - `next.config.ts`
 - `tailwind.config.ts`
@@ -213,6 +216,7 @@ Create the Next.js project using `create-next-app` with App Router, TypeScript, 
 **Depends on:** Nothing (first task)
 
 **Acceptance criteria:**
+
 - [ ] `npm run dev` starts the dev server without errors
 - [ ] TypeScript compiles with strict mode enabled
 - [ ] Tailwind CSS classes render correctly
@@ -231,6 +235,7 @@ Create the Next.js project using `create-next-app` with App Router, TypeScript, 
 Create a new Supabase project. Initialize the Supabase CLI locally. Write SQL migration files that create the full database schema with all tables, constraints, indexes, and triggers.
 
 **What to do (step by step):**
+
 1. Create a new Supabase project via the Supabase dashboard
 2. Run `npx supabase init` in the project root
 3. Run `npx supabase link --project-ref <project-id>`
@@ -253,6 +258,7 @@ Create a new Supabase project. Initialize the Supabase CLI locally. Write SQL mi
 8. Run `npx supabase db push` to apply migrations
 
 **Files to create:**
+
 - `supabase/config.toml` (via supabase init)
 - `supabase/migrations/00001_create_tables.sql`
 - `supabase/migrations/00002_indexes_and_triggers.sql`
@@ -261,6 +267,7 @@ Create a new Supabase project. Initialize the Supabase CLI locally. Write SQL mi
 **Depends on:** Task 1
 
 **Acceptance criteria:**
+
 - [ ] `supabase db push` applies migrations without error
 - [ ] All 3 tables exist with correct columns, types, constraints, and FKs
 - [ ] The 5-profile-per-user constraint is enforced at the DB level (trigger raises exception)
@@ -278,6 +285,7 @@ Create a new Supabase project. Initialize the Supabase CLI locally. Write SQL mi
 Write RLS policies for all three tables so users can only access their own data. Create a helper function to avoid repeating ownership subqueries.
 
 **What to do (step by step):**
+
 1. Create migration `supabase/migrations/00003_rls_policies.sql`:
 2. Enable RLS on `profiles`, `medications`, and `deduction_logs`
 3. Create helper function `public.is_owner_of_profile(p_profile_id UUID)` returning BOOLEAN — checks `EXISTS (SELECT 1 FROM profiles WHERE id = p_profile_id AND user_id = auth.uid())`
@@ -298,11 +306,13 @@ Write RLS policies for all three tables so users can only access their own data.
 7. Apply with `npx supabase db push`
 
 **Files to create:**
+
 - `supabase/migrations/00003_rls_policies.sql`
 
 **Depends on:** Task 2
 
 **Acceptance criteria:**
+
 - [ ] RLS is enabled on all 3 tables
 - [ ] Authenticated user can only see/modify their own profiles and medications
 - [ ] Cross-user data access is blocked even with direct queries
@@ -319,6 +329,7 @@ Write RLS policies for all three tables so users can only access their own data.
 Create the Supabase client utility files following `@supabase/ssr` patterns, and the Next.js middleware for session refresh and auth redirects.
 
 **What to do (step by step):**
+
 1. Create `src/lib/supabase/client.ts`:
    - Export `createClient()` using `createBrowserClient` from `@supabase/ssr`
    - Uses `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -343,6 +354,7 @@ Create the Supabase client utility files following `@supabase/ssr` patterns, and
    - Export `config.matcher` to exclude static files
 
 **Files to create:**
+
 - `src/lib/supabase/client.ts`
 - `src/lib/supabase/server.ts`
 - `src/lib/supabase/middleware.ts`
@@ -352,6 +364,7 @@ Create the Supabase client utility files following `@supabase/ssr` patterns, and
 **Depends on:** Task 1 (dependencies), Task 2 (Supabase project with URL/keys in `.env.local`)
 
 **Acceptance criteria:**
+
 - [ ] Browser client instantiates in Client Components without error
 - [ ] Server client instantiates in Server Components/Actions and reads cookies
 - [ ] Middleware refreshes sessions on every request
@@ -372,6 +385,7 @@ Create the Supabase client utility files following `@supabase/ssr` patterns, and
 Build the login page with React Hook Form + Zod validation, auth Server Actions (signIn, signOut), and reusable UI components (Button, Input, Card, FormField).
 
 **What to do (step by step):**
+
 1. Create `src/components/ui/button.tsx`:
    - Reusable button with variants: `primary`, `secondary`, `danger`, `ghost`
    - Sizes: `sm`, `md`, `lg`
@@ -401,6 +415,7 @@ Build the login page with React Hook Form + Zod validation, auth Server Actions 
    - Responsive: mobile-friendly centered card
 
 **Files to create:**
+
 - `src/app/(auth)/layout.tsx`
 - `src/app/(auth)/login/page.tsx`
 - `src/actions/auth.ts`
@@ -412,6 +427,7 @@ Build the login page with React Hook Form + Zod validation, auth Server Actions 
 **Depends on:** Task 4
 
 **Acceptance criteria:**
+
 - [ ] Login page renders at `/login` with username and password fields
 - [ ] Form validation shows inline errors for empty/short fields before submit
 - [ ] Successful login redirects to `/dashboard`
@@ -430,6 +446,7 @@ Build the login page with React Hook Form + Zod validation, auth Server Actions 
 Create a Node.js/TypeScript CLI script to seed user accounts via the Supabase Admin API.
 
 **What to do (step by step):**
+
 1. Create `scripts/create-user.ts`:
    - Parse CLI args: `--username` (required), `--password` (required), `--timezone` (required, e.g., `"Asia/Manila"`)
    - Use `process.argv` parsing (simple manual parsing or use `parseArgs` from `node:util`)
@@ -443,13 +460,15 @@ Create a Node.js/TypeScript CLI script to seed user accounts via the Supabase Ad
 3. Load environment variables from `.env.local` using `dotenv/config` or inline
 
 **Files to create:**
+
 - `scripts/create-user.ts`
 - Update `package.json` (add `create-user` script, add `dotenv` + `tsx` as dev deps if not present)
 
 **Depends on:** Task 2 (database schema), Task 4 (admin client pattern)
 
 **Acceptance criteria:**
-- [ ] `npm run create-user -- --username jane --password temp1234 --timezone "Asia/Manila"` creates a user in Supabase Auth + a profile in the profiles table
+
+- [ ] `npm run create-user -- --username vince --password temp1234 --timezone "Asia/Manila"` creates a user in Supabase Auth + a profile in the profiles table
 - [ ] The created user can log in via the login page
 - [ ] Duplicate username shows a clear error
 - [ ] Missing required arguments shows usage help
@@ -467,6 +486,7 @@ Create a Node.js/TypeScript CLI script to seed user accounts via the Supabase Ad
 Build the authenticated app shell with responsive sidebar navigation, profile selector dropdown, and Zustand profile store with localStorage persistence.
 
 **What to do (step by step):**
+
 1. Create `src/stores/profile-store.ts` (Zustand):
    - State: `profiles: Profile[]`, `activeProfileId: string | null`
    - Actions: `setProfiles(profiles)`, `setActiveProfile(id)`, `addProfile(profile)`, `updateProfile(id, name)`, `removeProfile(id)`
@@ -496,6 +516,7 @@ Build the authenticated app shell with responsive sidebar navigation, profile se
    - Placed prominently in sidebar (above nav links)
 
 **Files to create:**
+
 - `src/app/(app)/layout.tsx`
 - `src/components/layout/app-shell.tsx`
 - `src/components/layout/sidebar.tsx`
@@ -506,6 +527,7 @@ Build the authenticated app shell with responsive sidebar navigation, profile se
 **Depends on:** Task 5 (auth works), Task 2 (profiles table)
 
 **Acceptance criteria:**
+
 - [ ] Authenticated users see the app shell with sidebar on desktop and hamburger on mobile
 - [ ] Profile selector shows all profiles for the current user
 - [ ] Switching profiles updates the Zustand store and persists to localStorage
@@ -524,6 +546,7 @@ Build the authenticated app shell with responsive sidebar navigation, profile se
 Build the profile management section of the Settings page with inline rename, add, and delete (with confirmation dialog).
 
 **What to do (step by step):**
+
 1. Create `src/actions/profiles.ts`:
    - `createProfile(name: string)`: check count < 5, insert into `profiles`, return new profile. Call `revalidatePath('/', 'layout')`
    - `renameProfile(profileId: string, newName: string)`: update profile name. Call `revalidatePath`
@@ -546,6 +569,7 @@ Build the profile management section of the Settings page with inline rename, ad
    - Placeholder sections for account settings (built in Task 18)
 
 **Files to create:**
+
 - `src/actions/profiles.ts`
 - `src/components/ui/confirm-dialog.tsx`
 - `src/components/settings/profile-manager.tsx`
@@ -554,6 +578,7 @@ Build the profile management section of the Settings page with inline rename, ad
 **Depends on:** Task 7 (app shell, profile store), Task 3 (RLS policies)
 
 **Acceptance criteria:**
+
 - [ ] Users can add a new profile (up to 5 max)
 - [ ] "Add Profile" button is disabled at the 5-profile limit
 - [ ] Users can rename any profile inline
@@ -574,6 +599,7 @@ Build the profile management section of the Settings page with inline rename, ad
 Build the medications list page with card grid display and inline "+/-" quantity adjuster.
 
 **What to do (step by step):**
+
 1. Create `src/actions/medications.ts` (initial version):
    - `fetchMedications(profileId: string)`: fetch all medications for a profile, ordered alphabetically
    - `adjustQuantity(medicationId: string, amount: number)`: update medication quantity (add or subtract), insert deduction_log with `type='manual'`, `amount_deducted = -amount` (negative for additions since it's a "deduction" log), `quantity_after = new quantity`. Validate new quantity >= 0
@@ -605,6 +631,7 @@ Build the medications list page with card grid display and inline "+/-" quantity
 7. Create `src/app/(app)/medications/loading.tsx` with skeleton cards
 
 **Files to create:**
+
 - `src/app/(app)/medications/page.tsx`
 - `src/app/(app)/medications/loading.tsx`
 - `src/components/medications/medication-list.tsx`
@@ -616,6 +643,7 @@ Build the medications list page with card grid display and inline "+/-" quantity
 **Depends on:** Task 7 (app shell, profile store), Task 2 (medications table), Task 3 (RLS)
 
 **Acceptance criteria:**
+
 - [ ] Medications page shows all medications for the active profile in a card grid
 - [ ] Each card displays name, quantity, unit, dosage summary, and stock status badge
 - [ ] Quick quantity adjuster (+/-) allows adding or removing stock inline
@@ -637,6 +665,7 @@ Build the medications list page with card grid display and inline "+/-" quantity
 Build the shared medication form component (React Hook Form + Zod) and the add/edit pages.
 
 **What to do (step by step):**
+
 1. Create `src/lib/validators/medication.ts` (Zod schema):
    - `medicationSchema = z.object({...})` validating:
      - `name`: `z.string().min(1, 'Medication name is required')`
@@ -675,6 +704,7 @@ Build the shared medication form component (React Hook Form + Zod) and the add/e
    - Pass medication data to the form in "edit" mode
 
 **Files to create:**
+
 - `src/lib/validators/medication.ts`
 - `src/components/medications/medication-form.tsx`
 - `src/components/medications/schedule-day-picker.tsx`
@@ -686,6 +716,7 @@ Build the shared medication form component (React Hook Form + Zod) and the add/e
 **Depends on:** Task 9 (medications list, actions file), Task 5 (UI components)
 
 **Acceptance criteria:**
+
 - [ ] Add form at `/medications/new` renders all fields with validation
 - [ ] Zod validates: name non-empty, quantity >= 0, dosage > 0, at least one schedule day, valid frequency
 - [ ] Inline validation errors show on invalid submit
@@ -706,6 +737,7 @@ Build the shared medication form component (React Hook Form + Zod) and the add/e
 Build the medication detail page showing all fields, run-out forecast, edit/delete actions, and the paginated deduction log.
 
 **What to do (step by step):**
+
 1. Add Server Actions to `src/actions/medications.ts`:
    - `fetchMedication(id: string)`: fetch single medication by ID (RLS enforces ownership)
    - `deleteMedication(id: string)`: delete with confirmation (CASCADE deletes logs), redirect to `/medications`
@@ -730,6 +762,7 @@ Build the medication detail page showing all fields, run-out forecast, edit/dele
    - Renders: `MedicationDetail`, edit button (→ `/medications/[id]/edit`), delete button (with confirm dialog), `DeductionLog`
 
 **Files to create:**
+
 - `src/app/(app)/medications/[id]/page.tsx`
 - `src/components/medications/medication-detail.tsx`
 - `src/components/medications/deduction-log.tsx`
@@ -739,6 +772,7 @@ Build the medication detail page showing all fields, run-out forecast, edit/dele
 **Depends on:** Task 10 (create/edit flow), Task 9 (card links here)
 
 **Acceptance criteria:**
+
 - [ ] Detail page shows all medication fields in a clear layout
 - [ ] Run-out date forecast is displayed
 - [ ] Edit button navigates to the edit form
@@ -759,6 +793,7 @@ Build the medication detail page showing all fields, run-out forecast, edit/dele
 Implement the core business logic as pure utility functions with comprehensive unit tests. These functions contain zero Supabase calls — they are pure TypeScript.
 
 **What to do (step by step):**
+
 1. Create `src/lib/utils/deduction.ts`:
    - `calculateDailyDeduction(dosageAmount: number, frequency: string): number`
      - Returns `dosageAmount * multiplier` where once_daily=1, twice_daily=2, three_times_daily=3
@@ -798,6 +833,7 @@ Implement the core business logic as pure utility functions with comprehensive u
    - Single-day-per-week schedule → correct extended timeline
 
 **Files to create:**
+
 - `src/lib/utils/deduction.ts`
 - `src/lib/utils/forecast.ts`
 - `src/__tests__/utils/deduction.test.ts`
@@ -806,6 +842,7 @@ Implement the core business logic as pure utility functions with comprehensive u
 **Depends on:** Task 2 (TypeScript types in `database.ts`)
 
 **Acceptance criteria:**
+
 - [ ] `calculateDailyDeduction(2, 'twice_daily')` returns 4
 - [ ] `calculateDailyDeduction(5, 'three_times_daily')` returns 15
 - [ ] `isScheduledDay` correctly identifies scheduled vs. unscheduled days
@@ -827,6 +864,7 @@ Implement the core business logic as pure utility functions with comprehensive u
 Integrate backfill logic into the app loading flow so missed deductions are applied before the user sees inventory data.
 
 **What to do (step by step):**
+
 1. Create migration `supabase/migrations/00004_backfill_function.sql`:
    - Postgres function `perform_backfill(p_medication_id UUID, p_deductions JSONB)`:
      - Accepts medication ID and a JSONB array of `[{ date, amount_deducted, quantity_after }]`
@@ -851,6 +889,7 @@ Integrate backfill logic into the app loading flow so missed deductions are appl
 6. Ensure idempotency: if `lastDeductionDate` is already today (in user's timezone), skip
 
 **Files to create:**
+
 - `supabase/migrations/00004_backfill_function.sql`
 - Update `src/actions/medications.ts` (add `backfillDeductions`, `backfillAllProfiles`)
 - Update `src/app/(app)/layout.tsx` (trigger backfill on load)
@@ -859,6 +898,7 @@ Integrate backfill logic into the app loading flow so missed deductions are appl
 **Depends on:** Task 12 (deduction utilities), Task 9 (medications actions)
 
 **Acceptance criteria:**
+
 - [ ] After 3 missed days, backfill creates correct deduction_log entries with historical dates and `type='auto-backfill'`
 - [ ] Medication quantities are updated correctly after backfill
 - [ ] Medications that would go below 0 are capped at 0
@@ -879,6 +919,7 @@ Integrate backfill logic into the app loading flow so missed deductions are appl
 Create the Postgres function and pg_cron job for automatic daily deductions across all users, respecting each user's timezone.
 
 **What to do (step by step):**
+
 1. Create migration `supabase/migrations/00005_daily_deduction_function.sql`:
    - Function `perform_daily_deductions()` returns void:
      - `SET search_path = public, extensions;`
@@ -899,12 +940,14 @@ Create the Postgres function and pg_cron job for automatic daily deductions acro
 3. Apply with `npx supabase db push`
 
 **Files to create:**
+
 - `supabase/migrations/00005_daily_deduction_function.sql`
 - `supabase/migrations/00006_pg_cron_schedule.sql`
 
 **Depends on:** Task 2 (schema), Task 3 (RLS — function uses SECURITY DEFINER to bypass)
 
 **Acceptance criteria:**
+
 - [ ] `perform_daily_deductions()` correctly deducts from medications where today is a scheduled day
 - [ ] Medications already deducted today (`last_deduction_date = today`) are skipped
 - [ ] Quantities are capped at 0 (never negative)
@@ -925,6 +968,7 @@ Create the Postgres function and pg_cron job for automatic daily deductions acro
 Build the main dashboard page with low stock summary, today's schedule, and full medication list with quick quantity update.
 
 **What to do (step by step):**
+
 1. Create `src/components/dashboard/low-stock-summary.tsx`:
    - Props: `medications: Medication[]`
    - Filter medications at or below their `lowStockThreshold`
@@ -952,6 +996,7 @@ Build the main dashboard page with low stock summary, today's schedule, and full
 5. Create `src/app/(app)/dashboard/loading.tsx` with skeleton UI
 
 **Files to create:**
+
 - `src/app/(app)/dashboard/page.tsx`
 - `src/app/(app)/dashboard/loading.tsx`
 - `src/components/dashboard/low-stock-summary.tsx`
@@ -961,6 +1006,7 @@ Build the main dashboard page with low stock summary, today's schedule, and full
 **Depends on:** Task 9 (medication list, quantity adjuster, stock badge), Task 12 (forecast utilities), Task 13 (backfill runs before dashboard renders)
 
 **Acceptance criteria:**
+
 - [ ] Dashboard shows low stock summary card with count and top 5 most urgent
 - [ ] Out-of-stock in red, low stock in amber
 - [ ] Today's schedule section shows only medications scheduled for today
@@ -982,6 +1028,7 @@ Build the main dashboard page with low stock summary, today's schedule, and full
 Build the weekly schedule view showing all medications organized by day of the week.
 
 **What to do (step by step):**
+
 1. Create `src/components/schedule/day-column.tsx`:
    - Props: `dayName: string`, `medications: Array<{ name, dosageAmount, dosageUnit, scheduleTimes }>`, `isToday: boolean`
    - Highlighted background if `isToday`
@@ -1003,6 +1050,7 @@ Build the weekly schedule view showing all medications organized by day of the w
    - Note at bottom: "To edit schedules, go to the medication's detail page"
 
 **Files to create:**
+
 - `src/app/(app)/schedule/page.tsx`
 - `src/components/schedule/weekly-grid.tsx`
 - `src/components/schedule/day-column.tsx`
@@ -1011,6 +1059,7 @@ Build the weekly schedule view showing all medications organized by day of the w
 **Depends on:** Task 9 (medications data), Task 7 (profile store)
 
 **Acceptance criteria:**
+
 - [ ] Schedule page shows 7-day weekly grid with medications organized by day
 - [ ] Each entry shows medication name, dosage, and times
 - [ ] Current day's column is visually highlighted
@@ -1029,6 +1078,7 @@ Build the weekly schedule view showing all medications organized by day of the w
 Implement client-side export of the medication schedule as PDF and CSV files.
 
 **What to do (step by step):**
+
 1. Create `src/lib/utils/export.ts`:
    - `exportScheduleAsPdf(profileName: string, medications: Medication[]): void`
      - Uses `jsPDF` to create a PDF document
@@ -1052,12 +1102,14 @@ Implement client-side export of the medication schedule as PDF and CSV files.
    - Disable buttons if no medications exist (with tooltip)
 
 **Files to create:**
+
 - `src/lib/utils/export.ts`
 - Update `src/components/schedule/schedule-export-buttons.tsx`
 
 **Depends on:** Task 16 (schedule page, buttons placed), Task 9 (medication data)
 
 **Acceptance criteria:**
+
 - [ ] "Export PDF" downloads `[ProfileName]-schedule.pdf`
 - [ ] PDF contains profile name, date, and readable medication table
 - [ ] "Export CSV" downloads `[ProfileName]-schedule.csv`
@@ -1078,6 +1130,7 @@ Implement client-side export of the medication schedule as PDF and CSV files.
 Complete the Settings page with account settings forms for username, password, timezone, and notification email.
 
 **What to do (step by step):**
+
 1. Create `src/lib/validators/settings.ts` (Zod schemas):
    - `usernameSchema`: `z.object({ username: z.string().min(3).max(30) })`
    - `passwordSchema`: `z.object({ currentPassword: z.string().min(1), newPassword: z.string().min(8), confirmPassword: z.string().min(8) }).refine(data => data.newPassword === data.confirmPassword, { message: 'Passwords do not match', path: ['confirmPassword'] })`
@@ -1112,6 +1165,7 @@ Complete the Settings page with account settings forms for username, password, t
    - Each section in a card with clear heading
 
 **Files to create:**
+
 - `src/actions/settings.ts`
 - `src/lib/validators/settings.ts`
 - `src/components/settings/change-username-form.tsx`
@@ -1123,6 +1177,7 @@ Complete the Settings page with account settings forms for username, password, t
 **Depends on:** Task 8 (settings page exists with profile management), Task 4 (admin client)
 
 **Acceptance criteria:**
+
 - [ ] Username change updates the login credential (can log in with new username)
 - [ ] Username uniqueness is enforced (error if taken)
 - [ ] Password change requires correct current password
@@ -1142,6 +1197,7 @@ Complete the Settings page with account settings forms for username, password, t
 Implement the daily low-stock email digest sent via Resend to users who have configured a notification email.
 
 **What to do (step by step):**
+
 1. Create `src/lib/email/send.ts`:
    - Import `Resend` from `resend`
    - Export `resend = new Resend(process.env.RESEND_API_KEY)`
@@ -1166,6 +1222,7 @@ Implement the daily low-stock email digest sent via Resend to users who have con
 4. Add `CRON_SECRET` to `.env.example`
 
 **Files to create:**
+
 - `src/app/api/email/daily-digest/route.ts`
 - `src/lib/email/templates/low-stock-digest.tsx`
 - `src/lib/email/send.ts`
@@ -1173,6 +1230,7 @@ Implement the daily low-stock email digest sent via Resend to users who have con
 **Depends on:** Task 12 (forecast utilities), Task 18 (notification_email in user metadata)
 
 **Acceptance criteria:**
+
 - [ ] POST to `/api/email/daily-digest` with correct Authorization header triggers the digest
 - [ ] Users with low-stock meds and a notification_email receive an email
 - [ ] Users with no low-stock meds receive no email
@@ -1194,6 +1252,7 @@ Implement the daily low-stock email digest sent via Resend to users who have con
 Audit and harden all forms and Server Actions with typed results, server-side validation, toast notifications, and error boundaries.
 
 **What to do (step by step):**
+
 1. Create `src/lib/types/actions.ts`:
    - `type ActionResult<T = void> = { success: true; data: T } | { success: false; error: string }`
 2. Create `src/lib/utils/error.ts`:
@@ -1223,6 +1282,7 @@ Audit and harden all forms and Server Actions with typed results, server-side va
    - "Go to dashboard" link as fallback
 
 **Files to create:**
+
 - `src/lib/types/actions.ts`
 - `src/lib/utils/error.ts`
 - `src/stores/notification-store.ts`
@@ -1234,6 +1294,7 @@ Audit and harden all forms and Server Actions with typed results, server-side va
 **Depends on:** All previous tasks (actions and forms exist)
 
 **Acceptance criteria:**
+
 - [ ] All Server Actions validate input with Zod before processing
 - [ ] All Server Actions return `ActionResult<T>` typed responses
 - [ ] Toast notifications appear for success and error states across all forms
@@ -1251,6 +1312,7 @@ Audit and harden all forms and Server Actions with typed results, server-side va
 Write additional unit and integration tests covering edge cases in core business logic and utilities.
 
 **What to do (step by step):**
+
 1. Extend `src/__tests__/utils/deduction.test.ts`:
    - Backfill with no scheduled days between last deduction and today → empty array
    - Medication added today (lastDeductionDate = today) → no backfill
@@ -1272,6 +1334,7 @@ Write additional unit and integration tests covering edge cases in core business
    - Test profile limit enforcement (mock attempting 6th profile)
 
 **Files to create/extend:**
+
 - `src/__tests__/utils/deduction.test.ts` (extend)
 - `src/__tests__/utils/forecast.test.ts` (extend)
 - `src/__tests__/utils/export.test.ts` (new)
@@ -1280,6 +1343,7 @@ Write additional unit and integration tests covering edge cases in core business
 **Depends on:** Task 12 (utility functions), Task 17 (export utilities), Task 20 (typed action results)
 
 **Acceptance criteria:**
+
 - [ ] All edge cases listed above have passing test cases
 - [ ] Backfill with 0 applicable days returns empty array
 - [ ] Forecast with 0 quantity returns null/0
@@ -1297,6 +1361,7 @@ Write additional unit and integration tests covering edge cases in core business
 Final responsive design and accessibility audit across all pages.
 
 **What to do (step by step):**
+
 1. Audit every page at 375px (mobile), 768px (tablet), and 1440px (desktop):
    - Fix layout breaks, overflow, or content clipping
    - Ensure minimum 44×44px tap targets on all buttons and interactive elements
@@ -1327,6 +1392,7 @@ Final responsive design and accessibility audit across all pages.
    - Form should not overflow the viewport
 
 **Files to modify:**
+
 - All page files in `src/app/` (add metadata exports)
 - All component files (accessibility attributes as needed)
 - `src/app/layout.tsx` (skip-to-main link, global metadata)
@@ -1335,6 +1401,7 @@ Final responsive design and accessibility audit across all pages.
 **Depends on:** All UI tasks (Tasks 5, 7-11, 15-18)
 
 **Acceptance criteria:**
+
 - [ ] All pages render correctly at 375px, 768px, and 1440px without horizontal scroll
 - [ ] All interactive elements are keyboard accessible (Tab, Enter, Escape for modals)
 - [ ] Color contrast passes WCAG 2.1 AA
@@ -1350,16 +1417,16 @@ Final responsive design and accessibility audit across all pages.
 
 ## Phase Summary
 
-| Phase | Tasks | Description |
-|-------|-------|-------------|
-| Phase 1: Project Setup & DB | Tasks 1–4 | Scaffolding, schema, RLS, Supabase clients |
-| Phase 2: Auth & Seeding | Tasks 5–6 | Login page, admin CLI |
-| Phase 3: App Shell & Profiles | Tasks 7–8 | Layout, nav, profile CRUD |
-| Phase 4: Medication CRUD & Logic | Tasks 9–13 | List, forms, detail, deduction/forecast utils, backfill |
-| Phase 5: pg_cron | Task 14 | Automatic daily deduction |
-| Phase 6: Dashboard | Task 15 | Main dashboard page |
-| Phase 7: Schedule & Export | Tasks 16–17 | Weekly view, PDF/CSV export |
-| Phase 8: Settings & Email | Tasks 18–19 | Account settings, Resend digest |
-| Phase 9: Polish & Testing | Tasks 20–22 | Error handling, tests, a11y |
+| Phase                            | Tasks       | Description                                             |
+| -------------------------------- | ----------- | ------------------------------------------------------- |
+| Phase 1: Project Setup & DB      | Tasks 1–4   | Scaffolding, schema, RLS, Supabase clients              |
+| Phase 2: Auth & Seeding          | Tasks 5–6   | Login page, admin CLI                                   |
+| Phase 3: App Shell & Profiles    | Tasks 7–8   | Layout, nav, profile CRUD                               |
+| Phase 4: Medication CRUD & Logic | Tasks 9–13  | List, forms, detail, deduction/forecast utils, backfill |
+| Phase 5: pg_cron                 | Task 14     | Automatic daily deduction                               |
+| Phase 6: Dashboard               | Task 15     | Main dashboard page                                     |
+| Phase 7: Schedule & Export       | Tasks 16–17 | Weekly view, PDF/CSV export                             |
+| Phase 8: Settings & Email        | Tasks 18–19 | Account settings, Resend digest                         |
+| Phase 9: Polish & Testing        | Tasks 20–22 | Error handling, tests, a11y                             |
 
 **Total: 22 tasks across 9 phases.**
