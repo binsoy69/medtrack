@@ -120,7 +120,15 @@ export interface Database {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      perform_backfill: {
+        Args: {
+          p_medication_id: string;
+          p_deductions: unknown;
+        };
+        Returns: undefined;
+      };
+    };
     Enums: Record<string, never>;
   };
 }

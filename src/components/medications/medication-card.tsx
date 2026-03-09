@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Medication } from "@/lib/types/database";
 import { StockBadge } from "@/components/medications/stock-badge";
 import { QuantityAdjuster } from "@/components/medications/quantity-adjuster";
+import { ForecastDisplay } from "@/components/medications/forecast-display";
 import { FREQUENCIES, DAYS_OF_WEEK } from "@/lib/constants";
 
 const DAY_ABBR: Record<string, string> = {
@@ -95,7 +96,12 @@ export function MedicationCard({ medication }: MedicationCardProps) {
             unit={medication.unit_type}
             onQuantityChange={setQuantity}
           />
-          <span className="text-xs text-slate-400 italic">Forecast: —</span>
+          <ForecastDisplay
+            quantity={quantity}
+            dosageAmount={medication.dosage_amount}
+            frequency={medication.frequency}
+            scheduleDays={medication.schedule_days}
+          />
         </div>
       </div>
     </Link>
