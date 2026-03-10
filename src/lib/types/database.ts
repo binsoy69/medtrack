@@ -128,6 +128,10 @@ export interface Database {
         };
         Returns: undefined;
       };
+      perform_daily_deductions: {
+        Args: Record<string, never>;
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
   };
