@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/types/database";
 import { ProfileManager } from "@/components/settings/profile-manager";
+import { ChangeUsernameForm } from "@/components/settings/change-username-form";
+import { ChangePasswordForm } from "@/components/settings/change-password-form";
+import { TimezoneForm } from "@/components/settings/timezone-form";
+import { NotificationEmailForm } from "@/components/settings/notification-email-form";
 
 export const metadata: Metadata = {
   title: "Settings — MedTrack",
@@ -20,6 +24,10 @@ export default async function SettingsPage() {
 
   const username =
     (user?.user_metadata?.username as string | undefined) ?? "User";
+  const timezone =
+    (user?.user_metadata?.timezone as string | undefined) ?? "UTC";
+  const notificationEmail =
+    (user?.user_metadata?.notification_email as string | null) ?? null;
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
@@ -31,39 +39,51 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      {/* Account info card */}
+      {/* Change Username */}
       <section className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/60">
           <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
-            Account
+            Change Username
           </h2>
         </div>
         <div className="px-6 py-5">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-teal-500/10 border border-teal-500/20">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                className="w-5 h-5 text-teal-600"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-                />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-slate-900">{username}</p>
-              <p className="text-xs text-slate-500">Signed in account</p>
-            </div>
-          </div>
-          <p className="mt-4 text-xs text-slate-400 bg-slate-50 rounded-lg p-3 border border-slate-100">
-            Account settings (username, password, timezone, notifications) will
-            be available in a future update.
-          </p>
+          <ChangeUsernameForm currentUsername={username} />
+        </div>
+      </section>
+
+      {/* Change Password */}
+      <section className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/60">
+          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+            Change Password
+          </h2>
+        </div>
+        <div className="px-6 py-5">
+          <ChangePasswordForm />
+        </div>
+      </section>
+
+      {/* Timezone */}
+      <section className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/60">
+          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+            Timezone
+          </h2>
+        </div>
+        <div className="px-6 py-5">
+          <TimezoneForm currentTimezone={timezone} />
+        </div>
+      </section>
+
+      {/* Notification Email */}
+      <section className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/60">
+          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+            Notification Email
+          </h2>
+        </div>
+        <div className="px-6 py-5">
+          <NotificationEmailForm currentEmail={notificationEmail} />
         </div>
       </section>
 
