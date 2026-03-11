@@ -97,21 +97,21 @@ export function TimePickerList({ value, onChange }: TimePickerListProps) {
           onClick={() => addQuickTime("08:00")}
           className="px-2.5 py-1 text-xs font-medium bg-slate-100 text-slate-700 rounded-md hover:bg-slate-200 transition-colors"
         >
-          Morning (08:00)
+          Morning (8:00 AM)
         </button>
         <button
           type="button"
           onClick={() => addQuickTime("13:00")}
           className="px-2.5 py-1 text-xs font-medium bg-slate-100 text-slate-700 rounded-md hover:bg-slate-200 transition-colors"
         >
-          Afternoon (13:00)
+          Afternoon (1:00 PM)
         </button>
         <button
           type="button"
           onClick={() => addQuickTime("20:00")}
           className="px-2.5 py-1 text-xs font-medium bg-slate-100 text-slate-700 rounded-md hover:bg-slate-200 transition-colors"
         >
-          Evening (20:00)
+          Evening (8:00 PM)
         </button>
       </div>
     </div>

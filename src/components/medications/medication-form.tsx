@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import {
@@ -27,6 +28,7 @@ interface MedicationFormProps {
   defaultValues?: Medication;
   onSubmit: (data: MedicationFormData) => Promise<{ error?: string }>;
   cancelHref: string;
+  successRedirect?: string;
 }
 
 export function MedicationForm({
@@ -34,7 +36,9 @@ export function MedicationForm({
   defaultValues,
   onSubmit,
   cancelHref,
+  successRedirect,
 }: MedicationFormProps) {
+  const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
@@ -79,6 +83,9 @@ export function MedicationForm({
       toast.error(result.error);
     } else {
       toast.success(mode === "create" ? "Medication added successfully" : "Changes saved successfully");
+      if (successRedirect) {
+        router.push(successRedirect);
+      }
     }
   };
 
@@ -121,7 +128,12 @@ export function MedicationForm({
               type="number"
               min={0}
               step="any"
-              {...register("quantity", { valueAsNumber: true })}
+              {...register("quantity", {
+                valueAsNumber: true,
+                onChange: (e) => {
+                  if (e.target.value < 0) e.target.value = 0;
+                },
+              })}
               error={errors.quantity?.message}
             />
           </FormField>
@@ -161,9 +173,14 @@ export function MedicationForm({
           >
             <Input
               type="number"
-              min={0}
+              min={0.1}
               step="any"
-              {...register("dosageAmount", { valueAsNumber: true })}
+              {...register("dosageAmount", {
+                valueAsNumber: true,
+                onChange: (e) => {
+                  if (e.target.value < 0) e.target.value = 0;
+                },
+              })}
               error={errors.dosageAmount?.message}
             />
           </FormField>
@@ -245,7 +262,12 @@ export function MedicationForm({
             type="number"
             min={0}
             step="1"
-            {...register("lowStockThreshold", { valueAsNumber: true })}
+            {...register("lowStockThreshold", {
+              valueAsNumber: true,
+              onChange: (e) => {
+                if (e.target.value < 0) e.target.value = 0;
+              },
+            })}
             error={errors.lowStockThreshold?.message}
           />
         </FormField>

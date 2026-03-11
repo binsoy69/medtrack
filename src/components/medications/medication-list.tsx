@@ -5,7 +5,19 @@ interface MedicationListProps {
   medications: Medication[];
 }
 
+function getEarliestTime(med: Medication): string {
+  const times = med.schedule_times?.filter(Boolean) ?? [];
+  if (times.length === 0) return "99:99";
+  return [...times].sort()[0];
+}
+
 export function MedicationList({ medications }: MedicationListProps) {
+  const sorted = [...medications].sort((a, b) => {
+    const ta = getEarliestTime(a);
+    const tb = getEarliestTime(b);
+    if (ta !== tb) return ta.localeCompare(tb);
+    return a.name.localeCompare(b.name);
+  });
   if (medications.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -36,7 +48,7 @@ export function MedicationList({ medications }: MedicationListProps) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {medications.map((medication) => (
+      {sorted.map((medication) => (
         <MedicationCard key={medication.id} medication={medication} />
       ))}
     </div>

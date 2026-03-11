@@ -19,8 +19,7 @@ export async function fetchMedications(
   const { data, error } = await supabase
     .from("medications")
     .select("*")
-    .eq("profile_id", profileId)
-    .order("name");
+    .eq("profile_id", profileId);
 
   if (error) return { error: error.message };
   return { data: (data as Medication[] | null) ?? [] };
@@ -77,7 +76,7 @@ export async function createMedication(
 
   revalidatePath("/medications");
   revalidatePath("/dashboard");
-  redirect("/medications");
+  return {};
 }
 
 export async function updateMedication(
@@ -111,7 +110,7 @@ export async function updateMedication(
 
   revalidatePath("/medications");
   revalidatePath("/dashboard");
-  redirect(`/medications/${medicationId}`);
+  return {};
 }
 
 export async function deleteMedication(
@@ -174,7 +173,6 @@ export async function adjustQuantity(
     type: "manual",
   });
 
-  revalidatePath("/medications");
   revalidatePath("/dashboard");
   return { data: { newQuantity } };
 }

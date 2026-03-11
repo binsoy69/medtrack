@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useProfileStore } from "@/stores/profile-store";
 import { fetchMedications } from "@/actions/medications";
-import { backfillAllProfiles } from "@/actions/backfill";
+import { backfillAllProfiles, triggerDailyDeductions } from "@/actions/backfill";
 import { LowStockSummary } from "@/components/dashboard/low-stock-summary";
 import { TodaysSchedule } from "@/components/dashboard/todays-schedule";
 import { MedicationQuickList } from "@/components/dashboard/medication-quick-list";
@@ -112,12 +112,9 @@ export default function DashboardPage() {
     }
     setIsLoading(true);
     setError(null);
-    try {
-      // Fire and forget backfill, or await it if we want to show loading
-      await backfillAllProfiles();
-    } catch (e) {
-      console.error("Backfill failed", e);
-    }
+    // Fire-and-forget: trigger server-side deductions + client backfill
+    triggerDailyDeductions();
+    backfillAllProfiles().catch((e) => console.error("Backfill failed", e));
     const result = await fetchMedications(activeProfileId);
     if (result.error) {
       setError(result.error);

@@ -29,6 +29,7 @@ export default function NewMedicationPage() {
         mode="create"
         onSubmit={handleSubmit}
         cancelHref="/medications"
+        successRedirect="/medications"
       />
     </div>
   );

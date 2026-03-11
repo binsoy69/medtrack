@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { toZonedTime } from "date-fns-tz";
 import { format } from "date-fns";
 import { calculateBackfillDeductions } from "@/lib/utils/deduction";
@@ -88,4 +89,15 @@ export async function backfillAllProfiles(): Promise<{ error?: string }> {
   }
 
   return {};
+}
+
+// Trigger the server-side daily deduction function via service role RPC.
+// This is a fallback for when pg_cron is not enabled or hasn't run yet.
+export async function triggerDailyDeductions(): Promise<void> {
+  try {
+    const supabase = createAdminClient();
+    await supabase.rpc("perform_daily_deductions");
+  } catch {
+    // Silently ignore — the client-side backfill covers the same ground
+  }
 }

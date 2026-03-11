@@ -81,6 +81,7 @@ export default function EditMedicationPage() {
         defaultValues={medication}
         onSubmit={handleSubmit}
         cancelHref={`/medications/${medicationId}`}
+        successRedirect={`/medications/${medicationId}`}
       />
     </div>
   );

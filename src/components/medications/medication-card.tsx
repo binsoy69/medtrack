@@ -2,11 +2,21 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { parse, format } from "date-fns";
 import type { Medication } from "@/lib/types/database";
 import { StockBadge } from "@/components/medications/stock-badge";
 import { QuantityAdjuster } from "@/components/medications/quantity-adjuster";
 import { ForecastDisplay } from "@/components/medications/forecast-display";
 import { FREQUENCIES, DAYS_OF_WEEK } from "@/lib/constants";
+
+function formatTimeAMPM(time24: string) {
+  try {
+    const parsed = parse(time24, "HH:mm", new Date());
+    return format(parsed, "h:mm a");
+  } catch {
+    return time24;
+  }
+}
 
 const DAY_ABBR: Record<string, string> = {
   monday: "Mo",
@@ -80,6 +90,20 @@ export function MedicationCard({ medication }: MedicationCardProps) {
             })
           )}
         </div>
+
+        {/* Schedule times */}
+        {medication.schedule_times && medication.schedule_times.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {[...medication.schedule_times].sort().map((time, i) => (
+              <span
+                key={i}
+                className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600"
+              >
+                {formatTimeAMPM(time)}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Divider */}
         <div className="border-t border-slate-100" />
