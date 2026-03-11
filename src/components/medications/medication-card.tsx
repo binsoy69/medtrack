@@ -87,7 +87,10 @@ export function MedicationCard({ medication }: MedicationCardProps) {
         {/* Quantity adjuster + forecast placeholder */}
         <div
           className="flex items-center justify-between"
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
           onKeyDown={(e) => e.stopPropagation()}
         >
           <QuantityAdjuster

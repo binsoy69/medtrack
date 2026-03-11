@@ -1,15 +1,30 @@
 import type { Medication } from "@/lib/types/database";
 import { FREQUENCIES } from "@/lib/constants";
+import { parse, format } from "date-fns";
 
 interface TodaysScheduleProps {
   medications: Medication[];
   today: string;
 }
 
+function formatTimeAMPM(time24: string) {
+  try {
+    const parsed = parse(time24, "HH:mm", new Date());
+    return format(parsed, "h:mm a");
+  } catch {
+    return time24;
+  }
+}
+
 export function TodaysSchedule({ medications, today }: TodaysScheduleProps) {
-  const scheduled = medications.filter((m) =>
-    m.schedule_days.includes(today)
-  );
+  const scheduled = medications
+    .filter((m) => m.schedule_days.includes(today))
+    .sort((a, b) => {
+      // Sort by earliest scheduled time, treating medications without times as end of day
+      const aTime = a.schedule_times && a.schedule_times.length > 0 ? Math.min(...a.schedule_times.map(t => parseInt(t.replace(':', '')))) : 9999;
+      const bTime = b.schedule_times && b.schedule_times.length > 0 ? Math.min(...b.schedule_times.map(t => parseInt(t.replace(':', '')))) : 9999;
+      return aTime - bTime;
+    });
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
@@ -71,7 +86,7 @@ export function TodaysSchedule({ medications, today }: TodaysScheduleProps) {
                         key={time}
                         className="px-2 py-0.5 rounded-full text-xs font-medium bg-teal-50 text-teal-700 border border-teal-200"
                       >
-                        {time}
+                        {formatTimeAMPM(time)}
                       </span>
                     ))}
                   </div>

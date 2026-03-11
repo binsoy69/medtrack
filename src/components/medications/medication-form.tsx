@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { toast } from "sonner";
 import {
   medicationSchema,
   type MedicationFormData,
@@ -75,6 +76,9 @@ export function MedicationForm({
     const result = await onSubmit(data);
     if (result?.error) {
       setServerError(result.error);
+      toast.error(result.error);
+    } else {
+      toast.success(mode === "create" ? "Medication added successfully" : "Changes saved successfully");
     }
   };
 
@@ -115,6 +119,7 @@ export function MedicationForm({
           <FormField label="Current Quantity" error={errors.quantity?.message}>
             <Input
               type="number"
+              min={0}
               step="any"
               {...register("quantity", { valueAsNumber: true })}
               error={errors.quantity?.message}
@@ -156,6 +161,7 @@ export function MedicationForm({
           >
             <Input
               type="number"
+              min={0}
               step="any"
               {...register("dosageAmount", { valueAsNumber: true })}
               error={errors.dosageAmount?.message}
@@ -237,6 +243,7 @@ export function MedicationForm({
         >
           <Input
             type="number"
+            min={0}
             step="1"
             {...register("lowStockThreshold", { valueAsNumber: true })}
             error={errors.lowStockThreshold?.message}

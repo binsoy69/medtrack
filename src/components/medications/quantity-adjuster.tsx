@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { toast } from "sonner";
 import { adjustQuantity } from "@/actions/medications";
 
 interface QuantityAdjusterProps {
@@ -27,8 +28,10 @@ export function QuantityAdjuster({
       const result = await adjustQuantity(medicationId, amount);
       if (result.error) {
         onQuantityChange(prevQty);
+        toast.error(result.error);
       } else if (result.data) {
         onQuantityChange(result.data.newQuantity);
+        toast.success(`Quantity updated to ${result.data.newQuantity}`);
       }
     });
   }

@@ -45,9 +45,13 @@ export function calculateBackfillDeductions(
   medication: BackfillInput,
   today: Date
 ): BackfillEntry[] {
-  if (!medication.lastDeductionDate) return [];
-
-  const lastDate = new Date(medication.lastDeductionDate + "T00:00:00");
+  let lastDate: Date;
+  if (!medication.lastDeductionDate) {
+    // If no last deduction date, process starting from today
+    lastDate = addDays(today, -1);
+  } else {
+    lastDate = new Date(medication.lastDeductionDate + "T00:00:00");
+  }
 
   // If last deduction is today or in the future, nothing to backfill
   if (lastDate >= today) return [];

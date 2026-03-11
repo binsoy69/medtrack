@@ -20,8 +20,23 @@ export function TimePickerList({ value, onChange }: TimePickerListProps) {
     onChange(updated);
   };
 
+  const addQuickTime = (time: string) => {
+    // avoid adding duplicates immediately sequentially, though multiple same times are weird anyway
+    if (!value.includes(time)) {
+      // If the last slot is empty, replace it, else append
+      if (value.length > 0 && value[value.length - 1] === "") {
+        const updated = [...value];
+        updated[updated.length - 1] = time;
+        onChange(updated);
+      } else {
+        onChange([...value, time]);
+      }
+    }
+  };
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
+      <div className="space-y-2">
       {value.map((time, index) => (
         <div key={index} className="flex items-center gap-2">
           <input
@@ -52,6 +67,7 @@ export function TimePickerList({ value, onChange }: TimePickerListProps) {
           </button>
         </div>
       ))}
+      </div>
 
       <button
         type="button"
@@ -73,6 +89,31 @@ export function TimePickerList({ value, onChange }: TimePickerListProps) {
         </svg>
         Add time
       </button>
+
+      <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+        <span className="text-xs text-slate-500 font-medium py-1 w-full sm:w-auto">Quick add:</span>
+        <button
+          type="button"
+          onClick={() => addQuickTime("08:00")}
+          className="px-2.5 py-1 text-xs font-medium bg-slate-100 text-slate-700 rounded-md hover:bg-slate-200 transition-colors"
+        >
+          Morning (08:00)
+        </button>
+        <button
+          type="button"
+          onClick={() => addQuickTime("13:00")}
+          className="px-2.5 py-1 text-xs font-medium bg-slate-100 text-slate-700 rounded-md hover:bg-slate-200 transition-colors"
+        >
+          Afternoon (13:00)
+        </button>
+        <button
+          type="button"
+          onClick={() => addQuickTime("20:00")}
+          className="px-2.5 py-1 text-xs font-medium bg-slate-100 text-slate-700 rounded-md hover:bg-slate-200 transition-colors"
+        >
+          Evening (20:00)
+        </button>
+      </div>
     </div>
   );
 }

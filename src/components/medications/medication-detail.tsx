@@ -2,8 +2,18 @@
 
 import type { Medication } from "@/lib/types/database";
 import { FREQUENCIES, DAYS_OF_WEEK } from "@/lib/constants";
+import { parse, format } from "date-fns";
 import { StockBadge } from "./stock-badge";
 import { ForecastDisplay } from "./forecast-display";
+
+function formatTimeAMPM(time24: string) {
+  try {
+    const parsed = parse(time24, "HH:mm", new Date());
+    return format(parsed, "h:mm a");
+  } catch {
+    return time24;
+  }
+}
 
 const DAY_LABELS: Record<string, string> = {
   monday: "Mon",
@@ -140,7 +150,7 @@ export function MedicationDetail({ medication }: MedicationDetailProps) {
                 key={i}
                 className="px-2.5 py-1 rounded-md text-sm font-medium bg-slate-100 text-slate-700 border border-slate-200"
               >
-                {time}
+                {formatTimeAMPM(time)}
               </span>
             ))}
           </div>
