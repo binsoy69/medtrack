@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/types/database";
 import { AppShell } from "@/components/layout/app-shell";
-import { getUserProfile } from "@/actions/auth";
 
 export default async function AppLayout({
   children,
