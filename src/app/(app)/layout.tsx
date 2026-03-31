@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import type { Profile } from "@/lib/types/database";
+import { getAppContext } from "@/lib/data/app-context";
 import { AppShell } from "@/components/layout/app-shell";
 
 export default async function AppLayout({
@@ -8,24 +7,16 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, username, profiles, activeProfileId } = await getAppContext();
 
   if (!user) redirect("/login");
 
-  // Backfill is now triggered client-side in the dashboard loosely
-
-
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: true });
-
   return (
-    <AppShell user={user} profiles={(profiles as Profile[] | null) ?? []}>
+    <AppShell
+      username={username}
+      profiles={profiles}
+      initialActiveProfileId={activeProfileId}
+    >
       {children}
     </AppShell>
   );

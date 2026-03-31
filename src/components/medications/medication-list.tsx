@@ -20,14 +20,14 @@ export function MedicationList({ medications }: MedicationListProps) {
   });
   if (medications.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+      <div className="flex flex-col items-center justify-center rounded-[32px] border border-dashed border-slate-200 bg-white/70 px-6 py-24 text-center">
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[24px] border border-slate-200 bg-slate-50">
           <svg
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             strokeWidth={1.5}
-            className="w-8 h-8 text-slate-400"
+            className="h-8 w-8 text-slate-400"
           >
             <path
               strokeLinecap="round"
@@ -36,7 +36,7 @@ export function MedicationList({ medications }: MedicationListProps) {
             />
           </svg>
         </div>
-        <h3 className="text-base font-semibold text-slate-700 mb-1">
+        <h3 className="mb-1 text-base font-semibold text-slate-700">
           No medications added yet
         </h3>
         <p className="text-sm text-slate-400">
@@ -47,9 +47,17 @@ export function MedicationList({ medications }: MedicationListProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {sorted.map((medication) => (
-        <MedicationCard key={medication.id} medication={medication} />
+    <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+      {sorted.map((medication, index) => (
+        <div
+          key={`${medication.id}-${medication.quantity}`}
+          className={index % 3 === 2 ? "xl:col-span-2" : ""}
+        >
+          <MedicationCard
+            medication={medication}
+            wide={index % 3 === 2}
+          />
+        </div>
       ))}
     </div>
   );

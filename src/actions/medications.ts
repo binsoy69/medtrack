@@ -4,7 +4,12 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { Medication, DeductionLog } from "@/lib/types/database";
-import type { MedicationFormData } from "@/lib/validators/medication";
+import {
+  quickMedicationSchema,
+  quickMedicationToFullForm,
+  type MedicationFormData,
+  type QuickMedicationFormData,
+} from "@/lib/validators/medication";
 import { DEDUCTION_LOG_PAGE_SIZE } from "@/lib/constants";
 
 export async function fetchMedications(
@@ -77,6 +82,19 @@ export async function createMedication(
   revalidatePath("/medications");
   revalidatePath("/dashboard");
   return {};
+}
+
+export async function createQuickMedication(
+  profileId: string,
+  formData: QuickMedicationFormData
+): Promise<{ error?: string }> {
+  const parsed = quickMedicationSchema.safeParse(formData);
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid medication data" };
+  }
+
+  return createMedication(profileId, quickMedicationToFullForm(parsed.data));
 }
 
 export async function updateMedication(

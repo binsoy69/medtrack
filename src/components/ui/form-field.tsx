@@ -11,7 +11,7 @@ export function FormField({
 }) {
   return (
     <div className="space-y-2 w-full">
-      <label className="text-sm font-medium leading-none text-gray-900 peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+      <label className="text-sm font-medium leading-none text-slate-800 peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
         {label}
       </label>
       {children}

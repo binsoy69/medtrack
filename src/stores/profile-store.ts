@@ -1,10 +1,13 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import type { Profile } from "@/lib/types/database";
 
 interface ProfileState {
   profiles: Profile[];
   activeProfileId: string | null;
+  syncProfiles: (
+    profiles: Profile[],
+    preferredActiveProfileId?: string | null
+  ) => void;
   setProfiles: (profiles: Profile[]) => void;
   setActiveProfile: (id: string) => void;
   addProfile: (profile: Profile) => void;
@@ -12,51 +15,59 @@ interface ProfileState {
   removeProfile: (id: string) => void;
 }
 
-export const useProfileStore = create<ProfileState>()(
-  persist(
-    (set) => ({
-      profiles: [],
-      activeProfileId: null,
+export const useProfileStore = create<ProfileState>()((set) => ({
+  profiles: [],
+  activeProfileId: null,
 
-      setProfiles: (profiles) =>
-        set((state) => {
-          const isValid = profiles.some((p) => p.id === state.activeProfileId);
-          return {
-            profiles,
-            activeProfileId: isValid
-              ? state.activeProfileId
-              : (profiles[0]?.id ?? null),
-          };
-        }),
+  syncProfiles: (profiles, preferredActiveProfileId) =>
+    set((state) => {
+      const preferredIsValid = profiles.some(
+        (profile) => profile.id === preferredActiveProfileId
+      );
+      const currentIsValid = profiles.some(
+        (profile) => profile.id === state.activeProfileId
+      );
 
-      setActiveProfile: (id) => set({ activeProfileId: id }),
-
-      addProfile: (profile) =>
-        set((state) => ({ profiles: [...state.profiles, profile] })),
-
-      updateProfile: (id, name) =>
-        set((state) => ({
-          profiles: state.profiles.map((p) =>
-            p.id === id ? { ...p, name } : p,
-          ),
-        })),
-
-      removeProfile: (id) =>
-        set((state) => {
-          const filtered = state.profiles.filter((p) => p.id !== id);
-          const isValid = filtered.some((p) => p.id === state.activeProfileId);
-          return {
-            profiles: filtered,
-            activeProfileId: isValid
-              ? state.activeProfileId
-              : (filtered[0]?.id ?? null),
-          };
-        }),
+      return {
+        profiles,
+        activeProfileId: preferredIsValid
+          ? (preferredActiveProfileId ?? null)
+          : currentIsValid
+            ? state.activeProfileId
+            : (profiles[0]?.id ?? null),
+      };
     }),
-    {
-      name: "medtrack-profile-store",
-      // Only persist the active profile selection, not the full list
-      partialize: (state) => ({ activeProfileId: state.activeProfileId }),
-    },
-  ),
-);
+
+  setProfiles: (profiles) =>
+    set((state) => {
+      const isValid = profiles.some((profile) => profile.id === state.activeProfileId);
+      return {
+        profiles,
+        activeProfileId: isValid ? state.activeProfileId : (profiles[0]?.id ?? null),
+      };
+    }),
+
+  setActiveProfile: (id) => set({ activeProfileId: id }),
+
+  addProfile: (profile) =>
+    set((state) => ({ profiles: [...state.profiles, profile] })),
+
+  updateProfile: (id, name) =>
+    set((state) => ({
+      profiles: state.profiles.map((profile) =>
+        profile.id === id ? { ...profile, name } : profile
+      ),
+    })),
+
+  removeProfile: (id) =>
+    set((state) => {
+      const filtered = state.profiles.filter((profile) => profile.id !== id);
+      const isValid = filtered.some(
+        (profile) => profile.id === state.activeProfileId
+      );
+      return {
+        profiles: filtered,
+        activeProfileId: isValid ? state.activeProfileId : (filtered[0]?.id ?? null),
+      };
+    }),
+}));

@@ -1,6 +1,7 @@
+import { ClockCountdown } from "@phosphor-icons/react/dist/ssr";
+import { parse, format } from "date-fns";
 import type { Medication } from "@/lib/types/database";
 import { FREQUENCIES } from "@/lib/constants";
-import { parse, format } from "date-fns";
 
 interface TodaysScheduleProps {
   medications: Medication[];
@@ -18,84 +19,87 @@ function formatTimeAMPM(time24: string) {
 
 export function TodaysSchedule({ medications, today }: TodaysScheduleProps) {
   const scheduled = medications
-    .filter((m) => m.schedule_days.includes(today))
-    .sort((a, b) => {
-      // Sort by earliest scheduled time, treating medications without times as end of day
-      const aTime = a.schedule_times && a.schedule_times.length > 0 ? Math.min(...a.schedule_times.map(t => parseInt(t.replace(':', '')))) : 9999;
-      const bTime = b.schedule_times && b.schedule_times.length > 0 ? Math.min(...b.schedule_times.map(t => parseInt(t.replace(':', '')))) : 9999;
-      return aTime - bTime;
+    .filter((medication) => medication.schedule_days.includes(today))
+    .sort((left, right) => {
+      const leftTime =
+        left.schedule_times && left.schedule_times.length > 0
+          ? Math.min(...left.schedule_times.map((time) => parseInt(time.replace(":", ""))))
+          : 9999;
+      const rightTime =
+        right.schedule_times && right.schedule_times.length > 0
+          ? Math.min(...right.schedule_times.map((time) => parseInt(time.replace(":", ""))))
+          : 9999;
+      return leftTime - rightTime;
     });
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-9 h-9 rounded-xl bg-teal-50 flex items-center justify-center flex-shrink-0">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            className="w-5 h-5 text-teal-600"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
-        </div>
+    <section className="rounded-[22px] border border-slate-200/80 bg-white/90 p-4 shadow-[0_18px_36px_-28px_rgba(15,23,42,0.35)] backdrop-blur sm:p-5">
+      <div className="flex items-start gap-3">
+        <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700">
+          <ClockCountdown size={18} weight="duotone" />
+        </span>
         <div>
-          <h2 className="font-semibold text-slate-900 text-base">
-            Today&apos;s Schedule
+          <h2 className="text-base font-semibold tracking-tight text-slate-900">
+            Today&apos;s schedule
           </h2>
-          <p className="text-xs text-slate-400 capitalize">{today}</p>
+          <p className="text-[13px] capitalize text-slate-500">{today}</p>
         </div>
       </div>
 
       {scheduled.length === 0 ? (
-        <p className="text-sm text-slate-500">
-          No medications scheduled today.
-        </p>
+        <div className="mt-5 rounded-[18px] border border-slate-200 bg-slate-50/70 px-4 py-6">
+          <p className="text-sm font-medium text-slate-700">
+            No medications scheduled today.
+          </p>
+          <p className="mt-1 text-[13px] text-slate-500">
+            The current profile has no doses planned for this day.
+          </p>
+        </div>
       ) : (
-        <div className="space-y-2">
-          {scheduled.map((med) => {
-            const freqLabel =
-              FREQUENCIES.find((f) => f.value === med.frequency)?.label ??
-              med.frequency;
-            const hasTimes =
-              med.schedule_times && med.schedule_times.length > 0;
+        <div className="mt-5 space-y-2.5">
+          {scheduled.map((medication) => {
+            const frequencyLabel =
+              FREQUENCIES.find((frequency) => frequency.value === medication.frequency)
+                ?.label ?? medication.frequency;
 
             return (
               <div
-                key={med.id}
-                className="flex items-start justify-between gap-3 px-3 py-2.5 rounded-xl bg-slate-50"
+                key={medication.id}
+                className="rounded-[16px] border border-slate-200/80 bg-slate-50/80 px-3.5 py-3"
               >
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-slate-900 truncate">
-                    {med.name}
-                  </p>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {med.dosage_amount} {med.dosage_unit} &middot;{" "}
-                    {freqLabel.toLowerCase()}
-                  </p>
-                </div>
-                {hasTimes && (
-                  <div className="flex flex-wrap gap-1 flex-shrink-0">
-                    {med.schedule_times!.map((time) => (
-                      <span
-                        key={time}
-                        className="px-2 py-0.5 rounded-full text-xs font-medium bg-teal-50 text-teal-700 border border-teal-200"
-                      >
-                        {formatTimeAMPM(time)}
-                      </span>
-                    ))}
+                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-slate-900">
+                      {medication.name}
+                    </p>
+                    <p className="mt-0.5 text-[13px] text-slate-500">
+                      {medication.dosage_amount} {medication.dosage_unit} per dose,{" "}
+                      {frequencyLabel.toLowerCase()}
+                    </p>
                   </div>
-                )}
+
+                  <div className="flex flex-wrap gap-1.5">
+                    {medication.schedule_times && medication.schedule_times.length > 0 ? (
+                      medication.schedule_times.map((time) => (
+                        <span
+                          key={time}
+                          className="rounded-xl border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700"
+                        >
+                          {formatTimeAMPM(time)}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="rounded-xl border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-500">
+                        Flexible timing
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
             );
           })}
         </div>
       )}
-    </div>
+    </section>
   );
 }

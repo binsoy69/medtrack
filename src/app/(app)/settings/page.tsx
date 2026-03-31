@@ -30,82 +30,82 @@ export default async function SettingsPage() {
     (user?.user_metadata?.notification_email as string | null) ?? null;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
+    <div className="mx-auto max-w-2xl space-y-6 px-4 py-6">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Settings</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-xl font-semibold tracking-tight text-slate-900">Settings</h1>
+        <p className="mt-1 text-[13px] text-slate-500">
           Manage your profiles and account preferences.
         </p>
       </div>
 
       {/* Change Username */}
-      <section className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/60">
-          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+      <section className="overflow-hidden rounded-[18px] border border-slate-200 bg-white">
+        <div className="border-b border-slate-100 bg-slate-50/60 px-5 py-3">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-700">
             Change Username
           </h2>
         </div>
-        <div className="px-6 py-5">
+        <div className="px-5 py-4">
           <ChangeUsernameForm currentUsername={username} />
         </div>
       </section>
 
       {/* Change Password */}
-      <section className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/60">
-          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+      <section className="overflow-hidden rounded-[18px] border border-slate-200 bg-white">
+        <div className="border-b border-slate-100 bg-slate-50/60 px-5 py-3">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-700">
             Change Password
           </h2>
         </div>
-        <div className="px-6 py-5">
+        <div className="px-5 py-4">
           <ChangePasswordForm />
         </div>
       </section>
 
       {/* Timezone */}
-      <section className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/60">
-          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+      <section className="overflow-hidden rounded-[18px] border border-slate-200 bg-white">
+        <div className="border-b border-slate-100 bg-slate-50/60 px-5 py-3">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-700">
             Timezone
           </h2>
         </div>
-        <div className="px-6 py-5">
+        <div className="px-5 py-4">
           <TimezoneForm currentTimezone={timezone} />
         </div>
       </section>
 
       {/* Notification Email */}
-      <section className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/60">
-          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+      <section className="overflow-hidden rounded-[18px] border border-slate-200 bg-white">
+        <div className="border-b border-slate-100 bg-slate-50/60 px-5 py-3">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-700">
             Notification Email
           </h2>
         </div>
-        <div className="px-6 py-5">
+        <div className="px-5 py-4">
           <NotificationEmailForm currentEmail={notificationEmail} />
         </div>
       </section>
 
       {/* Profile management card */}
-      <section className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/60">
+      <section className="overflow-hidden rounded-[18px] border border-slate-200 bg-white">
+        <div className="border-b border-slate-100 bg-slate-50/60 px-5 py-3">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+              <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-700">
                 Profiles
               </h2>
-              <p className="mt-0.5 text-xs text-slate-500">
+              <p className="mt-0.5 text-[11px] text-slate-500">
                 Each profile tracks its own medication inventory. Up to 5
                 profiles per account.
               </p>
             </div>
-            <span className="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-1 rounded-full">
+            <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-400">
               {profiles?.length ?? 0} / 5
             </span>
           </div>
         </div>
-        <div className="px-6 py-5">
+        <div className="px-5 py-4">
           <ProfileManager initialProfiles={(profiles as Profile[] | null) ?? []} />
         </div>
       </section>

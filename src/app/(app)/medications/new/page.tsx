@@ -1,27 +1,32 @@
-"use client";
-
-import { useProfileStore } from "@/stores/profile-store";
+import { redirect } from "next/navigation";
 import { createMedication } from "@/actions/medications";
+import { getAppContext } from "@/lib/data/app-context";
 import { MedicationForm } from "@/components/medications/medication-form";
 import type { MedicationFormData } from "@/lib/validators/medication";
 
-export default function NewMedicationPage() {
-  const activeProfileId = useProfileStore((s) => s.activeProfileId);
+export default async function NewMedicationPage() {
+  const { activeProfile, activeProfileId } = await getAppContext();
 
-  const handleSubmit = async (
+  if (!activeProfileId) {
+    redirect("/settings");
+  }
+
+  const profileId = activeProfileId;
+
+  async function handleSubmit(
     data: MedicationFormData
-  ): Promise<{ error?: string }> => {
-    if (!activeProfileId) return { error: "No active profile selected" };
-    const result = await createMedication(activeProfileId, data);
-    return result ?? {};
-  };
+  ): Promise<{ error?: string }> {
+    "use server";
+
+    return createMedication(profileId, data);
+  }
 
   return (
-    <div className="px-4 sm:px-6 py-8 max-w-2xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Add Medication</h1>
-        <p className="text-sm text-slate-500 mt-0.5">
-          Add a new medication to track its inventory and schedule.
+    <div className="px-4 py-6 sm:px-5">
+      <div className="mb-5 max-w-5xl">
+        <h1 className="text-xl font-semibold tracking-tight text-slate-900">Add medication</h1>
+        <p className="mt-0.5 text-[13px] text-slate-500">
+          Full detail entry for {activeProfile?.name ?? "your active profile"}.
         </p>
       </div>
 

@@ -1,106 +1,57 @@
-"use client";
-
-import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { useProfileStore } from "@/stores/profile-store";
 import { fetchMedications } from "@/actions/medications";
+import { getAppContext } from "@/lib/data/app-context";
 import { MedicationList } from "@/components/medications/medication-list";
-import type { Medication } from "@/lib/types/database";
+import { QuickAddMedication } from "@/components/medications/quick-add-medication";
 
-function MedicationsSkeleton() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div
-          key={i}
-          className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col gap-3 animate-pulse"
-        >
-          <div className="flex items-start justify-between gap-2">
-            <div className="h-5 w-2/3 bg-slate-200 rounded" />
-            <div className="h-5 w-16 bg-slate-100 rounded-full" />
-          </div>
-          <div className="h-4 w-1/2 bg-slate-100 rounded" />
-          <div className="flex gap-1">
-            {Array.from({ length: 7 }).map((_, j) => (
-              <div key={j} className="h-5 w-7 bg-slate-100 rounded" />
-            ))}
-          </div>
-          <div className="h-px bg-slate-100" />
-          <div className="flex items-center justify-between">
-            <div className="h-8 w-32 bg-slate-200 rounded-lg" />
-            <div className="h-3 w-16 bg-slate-100 rounded" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
+export default async function MedicationsPage() {
+  const { activeProfile, activeProfileId } = await getAppContext();
+  const result = activeProfileId
+    ? await fetchMedications(activeProfileId)
+    : { data: [] };
 
-export default function MedicationsPage() {
-  const activeProfileId = useProfileStore((s) => s.activeProfileId);
-  const [medications, setMedications] = useState<Medication[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const loadMedications = useCallback(async () => {
-    if (!activeProfileId) {
-      setIsLoading(false);
-      return;
-    }
-    setIsLoading(true);
-    setError(null);
-    const result = await fetchMedications(activeProfileId);
-    if (result.error) {
-      setError(result.error);
-    } else {
-      setMedications(result.data ?? []);
-    }
-    setIsLoading(false);
-  }, [activeProfileId]);
-
-  useEffect(() => {
-    loadMedications();
-  }, [loadMedications]);
+  const medications = result.data ?? [];
+  const error = result.error ?? null;
 
   return (
-    <div className="px-4 sm:px-6 py-8 max-w-7xl mx-auto">
-      {/* Page header */}
-      <div className="flex items-center justify-between mb-6">
+    <div className="px-4 py-6 sm:px-5">
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Medications</h1>
-          {!isLoading && !error && (
-            <p className="text-sm text-slate-500 mt-0.5">
-              {medications.length} medication{medications.length !== 1 ? "s" : ""}
+          <h1 className="text-xl font-semibold tracking-tight text-slate-900">Medications</h1>
+          <p className="mt-0.5 text-[13px] text-slate-500">
+            {activeProfile
+              ? `${activeProfile.name}'s inventory`
+              : "Track stock and schedule without leaving the page."}
+          </p>
+          {!error && (
+            <p className="mt-1.5 text-[13px] text-slate-600">
+              {medications.length} medication{medications.length !== 1 ? "s" : ""} tracked
             </p>
           )}
         </div>
 
         <Link
           href="/medications/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-teal-600 text-white rounded-xl hover:bg-teal-700 active:bg-teal-800 transition-colors text-sm font-medium shadow-sm"
+          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-[13px] font-medium text-slate-700 shadow-[0_16px_30px_-24px_rgba(15,23,42,0.35)] transition-all hover:border-emerald-300 hover:text-emerald-700"
         >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2.5}
-            className="w-4 h-4 flex-shrink-0"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          Add Medication
+          Open full details form
         </Link>
       </div>
 
-      {/* Error state */}
+      {activeProfileId && (
+        <div className="mb-6">
+          <QuickAddMedication activeProfileId={activeProfileId} />
+        </div>
+      )}
+
       {error && (
-        <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 mb-6">
+        <div className="mb-6 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           <svg
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             strokeWidth={1.5}
-            className="w-4 h-4 flex-shrink-0"
+            className="h-4 w-4 flex-shrink-0"
           >
             <path
               strokeLinecap="round"
@@ -112,8 +63,7 @@ export default function MedicationsPage() {
         </div>
       )}
 
-      {/* Content */}
-      {isLoading ? <MedicationsSkeleton /> : <MedicationList medications={medications} />}
+      <MedicationList medications={medications} />
     </div>
   );
 }

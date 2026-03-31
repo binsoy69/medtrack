@@ -40,6 +40,8 @@ export function MedicationForm({
 }: MedicationFormProps) {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
+  const fieldSurfaceClass =
+    "flex h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus-visible:border-emerald-300 focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2";
 
   const {
     register,
@@ -90,7 +92,7 @@ export function MedicationForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(submit)} className="space-y-6">
+    <form onSubmit={handleSubmit(submit)} className="max-w-5xl space-y-6">
       {serverError && (
         <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
           <svg
@@ -111,8 +113,10 @@ export function MedicationForm({
       )}
 
       {/* Basic Info */}
-      <Card className="p-5 space-y-4">
-        <h2 className="text-base font-semibold text-slate-900">Basic Info</h2>
+      <Card className="space-y-4 p-4 sm:p-5">
+        <h2 className="text-sm font-semibold tracking-tight text-slate-900">
+          Basic information
+        </h2>
 
         <FormField label="Medication Name" error={errors.name?.message}>
           <Input
@@ -141,7 +145,7 @@ export function MedicationForm({
           <FormField label="Unit Type" error={errors.unitType?.message}>
             <select
               {...register("unitType")}
-              className="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
+              className={fieldSurfaceClass}
             >
               {UNIT_TYPES.map((unit) => (
                 <option key={unit} value={unit}>
@@ -157,14 +161,16 @@ export function MedicationForm({
             {...register("notes")}
             rows={3}
             placeholder="Any additional notes about this medication..."
-            className="flex w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
+            className="flex w-full rounded-[18px] border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus-visible:border-emerald-300 focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2"
           />
         </FormField>
       </Card>
 
       {/* Dosage */}
-      <Card className="p-5 space-y-4">
-        <h2 className="text-base font-semibold text-slate-900">Dosage</h2>
+      <Card className="space-y-4 p-4 sm:p-5">
+        <h2 className="text-sm font-semibold tracking-tight text-slate-900">
+          Dosage
+        </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <FormField
@@ -188,7 +194,7 @@ export function MedicationForm({
           <FormField label="Dosage Unit" error={errors.dosageUnit?.message}>
             <select
               {...register("dosageUnit")}
-              className="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
+              className={fieldSurfaceClass}
             >
               {UNIT_TYPES.map((unit) => (
                 <option key={unit} value={unit}>
@@ -201,7 +207,7 @@ export function MedicationForm({
           <FormField label="Frequency" error={errors.frequency?.message}>
             <select
               {...register("frequency")}
-              className="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
+              className={fieldSurfaceClass}
             >
               {FREQUENCIES.map((freq) => (
                 <option key={freq.value} value={freq.value}>
@@ -214,8 +220,10 @@ export function MedicationForm({
       </Card>
 
       {/* Schedule */}
-      <Card className="p-5 space-y-4">
-        <h2 className="text-base font-semibold text-slate-900">Schedule</h2>
+      <Card className="space-y-4 p-4 sm:p-5">
+        <h2 className="text-sm font-semibold tracking-tight text-slate-900">
+          Schedule
+        </h2>
 
         <FormField
           label="Schedule Days"
@@ -249,9 +257,9 @@ export function MedicationForm({
       </Card>
 
       {/* Stock Alert */}
-      <Card className="p-5 space-y-4">
-        <h2 className="text-base font-semibold text-slate-900">
-          Stock Alert
+      <Card className="space-y-4 p-4 sm:p-5">
+        <h2 className="text-sm font-semibold text-slate-900">
+          Stock alert
         </h2>
 
         <FormField
